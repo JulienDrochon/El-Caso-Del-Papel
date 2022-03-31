@@ -38,7 +38,7 @@ int ElectrodeValue = 0;
 int analogValues[6] = {};
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
 
   wifiMulti.addAP("SFR-aea0", "QITEL7AX2FEV");   // add Wi-Fi networks you want to connect to
@@ -48,8 +48,7 @@ void setup() {
   Udp.begin(localPort);
   while (!Serial) {}
 }
-int j = 0;
-const char * stringosc;
+
 
 void loop() {
 
@@ -109,5 +108,5 @@ void AnalogSendToOsc() {
     msg.empty();
     delay(10);
   }
-  // }
+
 }
