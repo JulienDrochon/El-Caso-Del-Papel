@@ -57,7 +57,7 @@ void setup()
 
   MPR121.setInterruptPin(MPR121_INT);
 
-  MPR121.updateTouchData();
+  MPR121.updateFilteredData();
 }
 
 void loop() {

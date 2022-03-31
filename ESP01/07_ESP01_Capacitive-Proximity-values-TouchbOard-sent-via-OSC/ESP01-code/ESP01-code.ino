@@ -112,7 +112,7 @@ void loop() {
 
 void ProximitySendToOsc(int indElectrode[], int valElectrode[]) {
    for (byte i = 0; i < sizeof(indElectrode); i++) {
-  String addr_prefix = "/proximity";
+  String addr_prefix = "/proximity/";
   String addr_suffix = String(indElectrode[i]);
   String completeaddress = addr_prefix + addr_suffix;
   const char * addr = completeaddress.c_str();
