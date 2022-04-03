@@ -30,12 +30,11 @@ const IPAddress outIp(192, 168, 0, 20);     // remote IP of your computer
 const unsigned int outPort = 9999;          // remote port to receive OSC
 const unsigned int localPort = 8888;        // local port to listen for OSC packets (actually not used for sending)
 
-int val = 0;
 String inString = "";
 String stringToInteger;
 String ElectrodeIndex = "";
 int ElectrodeValue = 0;
-int arr[12] = {};
+
 
 void setup() {
   Serial.begin(9600);
@@ -49,8 +48,6 @@ void setup() {
   Udp.begin(localPort);
   while (!Serial) {}
 }
-int j = 0;
-const char * stringosc;
 
 void loop() {
 
@@ -71,16 +68,15 @@ void loop() {
       inString = "";
       StringReady = true;
     }
-    if (StringReady) {
-      sendToOsc(ElectrodeIndex, ElectrodeValue );
-    }
   }
-
+  if (StringReady) {
+    ToggleSsendToOsc(ElectrodeIndex, ElectrodeValue );
+  }
   delay(10);
 }
 
-void sendToOsc(String indElectrode, int valElectrode) {
-  String addr_prefix = "/electrode/";
+void ToggleSsendToOsc(String indElectrode, int valElectrode) {
+  String addr_prefix = "/toggle/";
   String addr_suffix = indElectrode;
   String completeaddress = addr_prefix + addr_suffix;
   const char * addr = completeaddress.c_str();

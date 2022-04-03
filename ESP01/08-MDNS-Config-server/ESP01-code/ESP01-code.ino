@@ -4,6 +4,8 @@
 #include <DNSServer.h>
 #include <ESP8266mDNS.h>
 #include <EEPROM.h>
+#include <WiFiUdp.h>
+#include <OSCMessage.h>
 
 /*
    This example serves a "hello world" on a WLAN and a SoftAP at the same time.
@@ -16,6 +18,7 @@
 
    This is a captive portal because through the softAP it will redirect any http request to http://192.168.4.1/
 */
+
 
 /* Set these to your desired softAP credentials. They are not configurable at runtime */
 #ifndef APSSID
@@ -55,22 +58,28 @@ unsigned long lastConnectTry = 0;
 /** Current WLAN status */
 unsigned int status = WL_IDLE_STATUS;
 
+/** Osc */
+WiFiUDP Udp;                                // A UDP instance to let us send and receive packets over UDP
+const IPAddress outIp(192, 168, 0, 20);     // remote IP of your computer
+const unsigned int outPort = 9999;          // remote port to receive OSC
+const unsigned int localPort = 8888;        // local port to listen for OSC packets (actually not used for sending)
+
+String inString = "";
+int analogValues[6] = {};
+char separateursPins[6] = {'a', 'b', 'c', 'd', 'e', '<'};
+char separateurs[12] = {'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', '#'};
+
 void setup() {
   delay(1000);
   Serial.begin(115200);
-  // Serial.println();
-  //  Serial.println("Configuring access point...");
   /* You can remove the password parameter if you want the AP to be open. */
   WiFi.softAPConfig(apIP, apIP, netMsk);
   WiFi.softAP(softAP_ssid, softAP_password);
   delay(500);  // Without delay I've seen the IP address blank
-  // Serial.print("AP IP address: ");
-  // Serial.println(WiFi.softAPIP());
 
   /* Setup the DNS server redirecting all the domains to the apIP */
   dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
   dnsServer.start(DNS_PORT, "*", apIP);
-
 
   /* Setup web pages: root, wifi config pages, SO captive portal detectors and not found. */
   server.on("/", handleRoot);
@@ -82,9 +91,9 @@ void setup() {
   server.on("/fwlink", handleRoot);        // Microsoft captive portal. Maybe not needed. Might be handled by notFound handler.
   server.onNotFound(handleNotFound);
   server.begin();  // Web server start
-  //Serial.println("HTTP server started");
   loadCredentials();           // Load WLAN credentials from network
   connect = strlen(ssid) > 0;  // Request WLAN connect if there is a SSID
+  Udp.begin(localPort);
 }
 
 void connectWifi() {
@@ -115,18 +124,9 @@ void loop() {
       Serial.println(s);
       status = s;
       if (s == WL_CONNECTED) {
-        /* Just connected to WLAN */
-        /*    Serial.println("");
-            Serial.print("Connected to ");
-            Serial.println(ssid);
-            Serial.print("IP address: ");
-            Serial.println(WiFi.localIP());
-        */
         // Setup MDNS responder
         if (!MDNS.begin(myHostname)) {
-          //  Serial.println("Error setting up MDNS responder!");
         } else {
-          // Serial.println("mDNS responder started");
           // Add service to MDNS-SD
           MDNS.addService("http", "tcp", 80);
         }

@@ -20,13 +20,9 @@ const IPAddress outIp(192, 168, 0, 14);     // remote IP of your computer
 const unsigned int outPort = 9999;          // remote port to receive OSC
 const unsigned int localPort = 8888;        // local port to listen for OSC packets (actually not used for sending)
 
-//int val = 0;
 String inString = "";
-//String stringToInteger;
-//int numberOfSensors = 12;
 int ElectrodeIndex[12] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
 int ElectrodeValue[12] = {};
-//int arr[numberOfSensors] = {};
 
 void setup() {
   Serial.begin(115200);
@@ -101,8 +97,6 @@ void loop() {
       inString = "";
       StringReady = true;
     }
-
-
   }
   if (StringReady) {
     ProximitySendToOsc(ElectrodeIndex, ElectrodeValue);
@@ -111,18 +105,18 @@ void loop() {
 }
 
 void ProximitySendToOsc(int indElectrode[], int valElectrode[]) {
-   for (byte i = 0; i < sizeof(indElectrode); i++) {
-  String addr_prefix = "/proximity/";
-  String addr_suffix = String(indElectrode[i]);
-  String completeaddress = addr_prefix + addr_suffix;
-  const char * addr = completeaddress.c_str();
+  for (byte i = 0; i < sizeof(indElectrode); i++) {
+    String addr_prefix = "/proximity/";
+    String addr_suffix = String(indElectrode[i]);
+    String completeaddress = addr_prefix + addr_suffix;
+    const char * addr = completeaddress.c_str();
 
-  OSCMessage msg(addr);
-  msg.add(valElectrode[i]);
-  Udp.beginPacket(outIp, outPort);
-  msg.send(Udp);
-  Udp.endPacket();
-  msg.empty();
-  delay(10);
-   }
+    OSCMessage msg(addr);
+    msg.add(valElectrode[i]);
+    Udp.beginPacket(outIp, outPort);
+    msg.send(Udp);
+    Udp.endPacket();
+    msg.empty();
+    delay(10);
+  }
 }
