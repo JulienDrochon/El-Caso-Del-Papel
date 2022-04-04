@@ -16,9 +16,9 @@ SoftwareSerial mySerial(4, 5); // RX, TX
 #define LED_BUILTIN 13
 #endif
 
-char separateurs[12] = {'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', '#'};
-const int analogPins[6] = {0, 1, 2, 3, 4, 5};
-char separateursPins[6] = {'a', 'b', 'c', 'd', 'e', '<'};
+char proximitySplitters[12] = {'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', '#'};
+//const int analogPins[6] = {0, 1, 2, 3, 4, 5};
+char analogSplitters[6] = {'a', 'b', 'c', 'd', 'e', '<'};
 
 void setup()
 {
@@ -57,29 +57,26 @@ void setup()
   MPR121.setInterruptPin(MPR121_INT);
 
   MPR121.updateFilteredData();
+
+  // this restores thresholds saved in EEPROM
+  // MPR121.restoreSavedThresholds();
 }
 
 void loop() {
-//Serial.print(arduino.BOARD_NAME); 
-//#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
-
-//Code in here will only be compiled if an Arduino Mega is used.
-
-//#endif
-
+ MPR121.updateAll();
+ 
   for (int i = 0; i < 6; i++) {
-    mySerial.print(analogRead(analogPins[i]));
-    mySerial.print(separateursPins[i]);
+    mySerial.print(analogRead(i));
+    mySerial.print(analogSplitters[i]);
   }
 
-  MPR121.updateAll();
 
   for (int i = 0; i < 12; i++) {
     mySerial.print(MPR121.getFilteredData(i));
-    mySerial.print(separateurs[i]);
+    mySerial.print(proximitySplitters[i]);
   }
 
 
-  delay(10);
+  delay(10); //delay(10)
 
 }

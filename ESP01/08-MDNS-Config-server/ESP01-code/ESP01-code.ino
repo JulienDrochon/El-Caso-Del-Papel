@@ -58,24 +58,33 @@ unsigned long lastConnectTry = 0;
 /** Current WLAN status */
 unsigned int status = WL_IDLE_STATUS;
 
+/**Receive from Serial */
+String inString = "";
+//Analog Sensor Values
+char analogSplitters[6] = {'a', 'b', 'c', 'd', 'e', '<'};
+int analogValues[6] = {};
+//Proximity Sensor Values
+char proximitySplitters[12] = {'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', '#'};
+//int ElectrodeIndex[12] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+int ElectrodeValues[12] = {};
+//Touched Sensor Values
+
 /** Osc */
 WiFiUDP Udp;                                // A UDP instance to let us send and receive packets over UDP
-const IPAddress outIp(192, 168, 0, 20);     // remote IP of your computer
+IPAddress outIp(0, 0, 0, 0);     // remote IP of your computer
 const unsigned int outPort = 9999;          // remote port to receive OSC
 const unsigned int localPort = 8888;        // local port to listen for OSC packets (actually not used for sending)
-
-String inString = "";
-int analogValues[6] = {};
-char separateursPins[6] = {'a', 'b', 'c', 'd', 'e', '<'};
-char separateurs[12] = {'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', '#'};
+boolean StringReady = false;
 
 void setup() {
-  delay(1000);
+
   Serial.begin(115200);
+  delay(1000);
   /* You can remove the password parameter if you want the AP to be open. */
   WiFi.softAPConfig(apIP, apIP, netMsk);
   WiFi.softAP(softAP_ssid, softAP_password);
   delay(500);  // Without delay I've seen the IP address blank
+
 
   /* Setup the DNS server redirecting all the domains to the apIP */
   dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
@@ -92,6 +101,11 @@ void setup() {
   server.onNotFound(handleNotFound);
   server.begin();  // Web server start
   loadCredentials();           // Load WLAN credentials from network
+  
+   if (oscIP != "OK" && oscIP != "") {
+   outIp.fromString(oscIP);
+  }
+  
   connect = strlen(ssid) > 0;  // Request WLAN connect if there is a SSID
   Udp.begin(localPort);
 }
@@ -101,8 +115,8 @@ void connectWifi() {
   WiFi.disconnect();
   WiFi.begin(ssid, password);
   int connRes = WiFi.waitForConnectResult();
-  Serial.print("connRes: ");
-  Serial.println(connRes);
+  // Serial.print("connRes: ");
+  // Serial.println(connRes);
 }
 
 void loop() {
@@ -120,8 +134,8 @@ void loop() {
       connect = true;
     }
     if (status != s) {  // WLAN status change
-      Serial.print("Status: ");
-      Serial.println(s);
+      //   Serial.print("Status: ");
+      //   Serial.println(s);
       status = s;
       if (s == WL_CONNECTED) {
         // Setup MDNS responder
@@ -143,4 +157,14 @@ void loop() {
   dnsServer.processNextRequest();
   // HTTP
   server.handleClient();
+  delay(1);
+  if (outIp != IPAddress(0, 0, 0, 0) && WiFi.localIP()!= IPAddress(0, 0, 0, 0)) {
+    StringReady = false;
+    receiveFromSerial();
+    if (StringReady) {
+      AnalogSendToOsc(analogValues);
+      // ToggleSendToOsc();
+      ProximitySendToOsc(ElectrodeValues);
+    }
+  }
 }

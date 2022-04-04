@@ -1,6 +1,9 @@
 #include <SoftwareSerial.h>
 SoftwareSerial mySerial(4, 5); // RX, TX
 
+char analogSplitters[6] = {'a', 'b', 'c', 'd', 'e', '<'};
+int analogValues[6] = {};
+
 void setup()
 {
   mySerial.begin(115200);
@@ -8,17 +11,10 @@ void setup()
 }
 
 void loop() {
-  mySerial.print(analogRead(A0));
-  mySerial.print("a");
-  mySerial.print(analogRead(A1));
-  mySerial.print("b");
-  mySerial.print(analogRead(A2));
-  mySerial.print("c");
-  mySerial.print(analogRead(A3));
-  mySerial.print("d");
-  mySerial.print(analogRead(A4));
-  mySerial.print("e");
-  mySerial.print(analogRead(A5));
-  mySerial.print("<");
+  for (int i = 0; i < sizeof(analogValues); i++;) {
+    mySerial.print(analogRead(i));
+    mySerial.print(analogSplitters[i]);
+  }
+ 
   delay(10);
 }

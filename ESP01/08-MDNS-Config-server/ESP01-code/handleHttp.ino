@@ -51,9 +51,10 @@ void handleOsc() {
   Page += String(F(    "<div><a href='/'>home</a> | <a href='/wifi'>wifi</a> | <a href='/osc'>osc</a></div>"
                        "<p>Last IP destination used : ")) + oscIP + F("</p>"
                            "\r\n<br /><form method='POST' action='oscsave'><h4>Enter computer IP's destination :</h4>"
-                           "<input type='text' placeholder='IP Address' name='o'/>"
+                           "<input type='text' placeholder='ipaddress' name='o'/>"
                            "<br /><input type='submit' value='Save'/></form>"
                            "</body></html>");
+ 
   server.send(200, "text/html", Page);
   server.client().stop();
 }

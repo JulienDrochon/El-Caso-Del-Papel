@@ -11,7 +11,6 @@
 
 ESP8266WiFiMulti wifiMulti;
 
-char separateurs[12] = {'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', '#'};
 
 //OSC
 WiFiUDP Udp;                                // A UDP instance to let us send and receive packets over UDP
@@ -21,8 +20,9 @@ const unsigned int outPort = 9999;          // remote port to receive OSC
 const unsigned int localPort = 8888;        // local port to listen for OSC packets (actually not used for sending)
 
 String inString = "";
+char proximitySplitters[12] = {'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', '#'};
 int ElectrodeIndex[12] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
-int ElectrodeValue[12] = {};
+int ElectrodeValues[12] = {};
 
 void setup() {
   Serial.begin(115200);
@@ -47,59 +47,69 @@ void loop() {
     //int testInt = Serial.parseInt();
 
     if (isDigit(inChar))inString += (char)inChar;
-    if (inChar == 'l') {
-      ElectrodeValue[0] = inString.toInt();
-      inString = "";
+    for (int i = 0; i < sizeof(ElectrodeValues); i++) {
+      if (inChar == '#') {
+        ElectrodeValues[i] = inString.toInt();
+        inString = "";
+        StringReady = true;
+      } else if (inChar == proximitySplitters[i]) {
+        ElectrodeValues[i] = inString.toInt();
+        inString = "";
+      }
     }
+    /* if (inChar == 'l') {
+       ElectrodeValues[0] = inString.toInt();
+       inString = "";
+      }
 
-    if (inChar == 'm') {
-      ElectrodeValue[1] = inString.toInt();
-      inString = "";
-    }
-    if (inChar == 'n') {
-      ElectrodeValue[2] = inString.toInt();
-      inString = "";
-    }
-    if (inChar == 'o') {
-      ElectrodeValue[3] = inString.toInt();
-      inString = "";
-    }
-    if (inChar == 'p') {
-      ElectrodeValue[4] = inString.toInt();
-      inString = "";
-    }
-    if (inChar == 'q') {
-      ElectrodeValue[5] = inString.toInt();
-      inString = "";
-    }
-    if (inChar == 'r') {
-      ElectrodeValue[6] = inString.toInt();
-      inString = "";
-    }
-    if (inChar == 's') {
-      ElectrodeValue[7] = inString.toInt();
-      inString = "";
-    }
-    if (inChar == 't') {
-      ElectrodeValue[8] = inString.toInt();
-      inString = "";
-    }
-    if (inChar == 'u') {
-      ElectrodeValue[9] = inString.toInt();
-      inString = "";
-    }
-    if (inChar == 'v') {
-      ElectrodeValue[10] = inString.toInt();
-      inString = "";
-    }
-    if (inChar == '#') {
-      ElectrodeValue[11] = inString.toInt();
-      inString = "";
-      StringReady = true;
-    }
+      if (inChar == 'm') {
+       ElectrodeValues[1] = inString.toInt();
+       inString = "";
+      }
+      if (inChar == 'n') {
+       ElectrodeValues[2] = inString.toInt();
+       inString = "";
+      }
+      if (inChar == 'o') {
+       ElectrodeValues[3] = inString.toInt();
+       inString = "";
+      }
+      if (inChar == 'p') {
+       ElectrodeValues[4] = inString.toInt();
+       inString = "";
+      }
+      if (inChar == 'q') {
+       ElectrodeValues[5] = inString.toInt();
+       inString = "";
+      }
+      if (inChar == 'r') {
+       ElectrodeValues[6] = inString.toInt();
+       inString = "";
+      }
+      if (inChar == 's') {
+       ElectrodeValues[7] = inString.toInt();
+       inString = "";
+      }
+      if (inChar == 't') {
+       ElectrodeValues[8] = inString.toInt();
+       inString = "";
+      }
+      if (inChar == 'u') {
+       ElectrodeValues[9] = inString.toInt();
+       inString = "";
+      }
+      if (inChar == 'v') {
+       ElectrodeValues[10] = inString.toInt();
+       inString = "";
+      }
+      if (inChar == '#') {
+       ElectrodeValues[11] = inString.toInt();
+       inString = "";
+       StringReady = true;
+      }*/
   }
   if (StringReady) {
-    ProximitySendToOsc(ElectrodeIndex, ElectrodeValue);
+    ProximitySendToOsc(ElectrodeIndex, ElectrodeValues);
   }
   delay(1);
 }

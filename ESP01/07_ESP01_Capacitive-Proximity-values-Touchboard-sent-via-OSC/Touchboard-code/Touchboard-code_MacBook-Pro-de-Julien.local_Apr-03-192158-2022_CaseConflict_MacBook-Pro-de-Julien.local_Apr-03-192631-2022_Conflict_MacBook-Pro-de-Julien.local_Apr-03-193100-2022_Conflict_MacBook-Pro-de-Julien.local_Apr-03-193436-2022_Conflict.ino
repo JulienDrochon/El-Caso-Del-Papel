@@ -16,7 +16,7 @@ SoftwareSerial mySerial(4, 5); // RX, TX
 #define LED_BUILTIN 13
 #endif
 
-char separateurs[12] = {'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', '#'};
+char proximitySplitters[12] = {'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', '#'};
 
 void setup()
 {
@@ -66,7 +66,7 @@ void loop() {
   for (int i = 0; i < 12; i++) {
  
     mySerial.print( MPR121.getFilteredData(i));
-    mySerial.print( separateurs[i]);
+    mySerial.print( proximitySplitters[i]);
 
   }
 

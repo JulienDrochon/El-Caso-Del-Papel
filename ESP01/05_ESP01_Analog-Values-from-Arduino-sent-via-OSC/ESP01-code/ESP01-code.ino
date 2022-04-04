@@ -56,11 +56,11 @@ void loop() {
 
     if (isDigit(inChar))inString += (char)inChar;
     for (int i = 0; i < sizeof(analogValues); i++) {
-      if (inChar == analogSplitters[5]) {
+      if (inChar == '<') {
         analogValues[i] = inString.toInt();
         inString = "";
         StringReady = true;
-      } else {
+      } else if (inChar == analogSplitters[i]) {
         analogValues[i] = inString.toInt();
         inString = "";
       }
