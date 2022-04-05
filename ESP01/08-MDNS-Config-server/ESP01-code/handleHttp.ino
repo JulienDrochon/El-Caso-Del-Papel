@@ -1,4 +1,6 @@
 /** Handle root or redirect to captive portal */
+String htmlStyles = "<style>body{font-family: sans-serif;color:#ddd;background-color:rgb(50, 50, 50);}a, a:visited{color:#ddd; font-variant:small-caps;}a:active{border-bottom:2px solid #ddd;}</style>";
+
 void handleRoot() {
   if (captivePortal()) {  // If caprive portal redirect instead of displaying the page.
     return;
@@ -8,11 +10,9 @@ void handleRoot() {
   server.sendHeader("Expires", "-1");
 
   String Page;
-  Page += F("<!DOCTYPE html><html lang='en'><head>"
-            "<meta name='viewport' content='width=device-width'>"
-            "<style>body{font-family: sans-serif;color:#ddd;background-color:rgb(50, 50, 50);}a, a:visited{color:#ddd; font-variant:small-caps;}a:active{border-bottom:2px solid #ddd;}</style>"
-            "<title>BI/O Wifi Module Settings</title></head><body>"
-            "<h1>Welcome to the B/IO wifi module settings</h1>");
+  Page += String(F("<!DOCTYPE html><html lang='en'><head>"
+                   "<meta name='viewport' content='width=device-width'>")) + htmlStyles + F("<title>BI/O Wifi Module Settings</title></head><body>"
+                       "<h1>Welcome to the B/IO wifi module settings</h1>");
   if (server.client().localIP() == apIP) {
     Page += String(F("<p>Connected through the soft AP:<br>")) + softAP_ssid + F("</p>");
   } else {
@@ -43,18 +43,19 @@ void handleOsc() {
   server.sendHeader("Expires", "-1");
 
   String Page;
-  Page += F("<!DOCTYPE html><html lang='en'><head>"
-            "<meta name='viewport' content='width=device-width'>"
-            "<style>body{font-family: sans-serif;color:#ddd;background-color:rgb(50, 50, 50);}a, a:visited{color:#ddd; font-variant:small-caps;}a:active{border-bottom:2px solid #ddd;}</style>"
-            "<title>BI/O Wifi Module | OSC</title></head><body>");
+  Page += String(F("<!DOCTYPE html><html lang='en'><head>"
+                   "<meta name='viewport' content='width=device-width'>")) + htmlStyles + F("<title>BI/O Wifi Module | OSC</title></head><body>");
 
   Page += String(F(    "<div><a href='/'>home</a> | <a href='/wifi'>wifi</a> | <a href='/osc'>osc</a></div>"
-                       "<p>Last IP destination used : ")) + oscIP + F("</p>"
+                       "<p>Last IP destination used : ")) + oscIP + String(F("</p><p>Port : ")) + outPort + F("</p>"
                            "\r\n<br /><form method='POST' action='oscsave'><h4>Enter computer IP's destination :</h4>"
                            "<input type='text' placeholder='ipaddress' name='o'/>"
                            "<br /><input type='submit' value='Save'/></form>"
+                           "<br><h4>Alvalaible OSC Messages :</h4>"
+                           "/analog/0<br>/analog/1<br>/analog/2<br>/analog/3<br>/analog/4<br>/analog/5<br><br>"
+                           "/proximty/0<br>/proximty/1<br>/proximty/2<br>/proximty/3<br>/proximty/4<br>/proximty/5<br>/proximty/6<br>/proximty/7<br>/proximty/8<br>/proximty/9<br>/proximty/10<br>/proximty/11"
                            "</body></html>");
- 
+
   server.send(200, "text/html", Page);
   server.client().stop();
 }
@@ -79,12 +80,10 @@ void handleWifi() {
   server.sendHeader("Expires", "-1");
 
   String Page;
-  Page += F("<!DOCTYPE html><html lang='en'><head>"
-            "<meta name='viewport' content='width=device-width'>"
-            "<style>body{font-family: sans-serif;color:#ddd;background-color:rgb(50, 50, 50);}a, a:visited{color:#ddd; font-variant:small-caps;}a:active{border-bottom:2px solid #ddd;}</style>"
-            "<title>BI/O Wifi Module | Wifi</title></head><body>"
-            "<div><a href='/'>home</a> | <a href='/wifi'>wifi</a> | <a href='/osc'>osc</a></div>"
-            "<h1>Wifi config</h1>");
+  Page += String(F("<!DOCTYPE html><html lang='en'><head>"
+                   "<meta name='viewport' content='width=device-width'>")) + htmlStyles + F("<title>BI/O Wifi Module | Wifi</title></head><body>"
+                       "<div><a href='/'>home</a> | <a href='/wifi'>wifi</a> | <a href='/osc'>osc</a></div>"
+                       "<h1>Wifi config</h1>");
   if (server.client().localIP() == apIP) {
     Page += String(F("<p>You are connected through the soft AP: ")) + softAP_ssid + F("</p>");
   } else {

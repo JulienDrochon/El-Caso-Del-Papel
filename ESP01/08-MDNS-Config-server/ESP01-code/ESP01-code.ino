@@ -22,7 +22,7 @@
 
 /* Set these to your desired softAP credentials. They are not configurable at runtime */
 #ifndef APSSID
-#define APSSID "ESP_ap"
+#define APSSID "B-IO_settings"
 #define APPSK "12345678"
 #endif
 
@@ -61,10 +61,10 @@ unsigned int status = WL_IDLE_STATUS;
 /**Receive from Serial */
 String inString = "";
 //Analog Sensor Values
-char analogSplitters[6] = {'a', 'b', 'c', 'd', 'e', '<'};
+//char analogSplitters[6] = {'a', 'b', 'c', 'd', 'e', '<'};
 int analogValues[6] = {};
 //Proximity Sensor Values
-char proximitySplitters[12] = {'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', '#'};
+//char proximitySplitters[12] = {'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', '#'};
 //int ElectrodeIndex[12] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
 int ElectrodeValues[12] = {};
 //Touched Sensor Values
